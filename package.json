@@ -3,9 +3,14 @@
   "version": "1.0.0",
   "description": "Client for Covle Mailer",
   "main": "src/MailerClient.ts",
+  "files": [
+    "build/**/*",
+    "!build/**/*.spec.*"
+  ],
   "scripts": {
     "build": "tsc",
-    "test": "jasmine-ts --config=jasmine.json"
+    "test": "jasmine-ts --config=jasmine.json",
+    "prepublish": "tsc"
   },
   "author": "Co van Leeuwen",
   "license": "MIT",
