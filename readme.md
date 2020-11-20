@@ -1,6 +1,6 @@
 # Mailer Client
 
-Client for the [devcafe-mailer]() component.
+Client for the [devcafe-mailer](https://github.com/devcafe-latte/mailer) component.
 
 Todo
 - Add totalItems to page result
