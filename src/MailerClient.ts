@@ -63,7 +63,7 @@ export class MailerClient {
   async getTemplates(): Promise<MailTemplate[]> {
     const result = await this._fetch.get('templates');
     if (result.status !== 200) {
-      console.error("Error getting templates", result.error);
+      console.error("Error getting templates", result.status, result.error || result.body);
       throw MailerError.new("Can't get Templates", 500);
     }
 
@@ -73,7 +73,7 @@ export class MailerClient {
   async updateTemplate(t: Partial<MailTemplate>): Promise<MailTemplate> {
     const result = await this._fetch.put('templates', t);
     if (result.status !== 200) {
-      console.error("Error updating template", result.error);
+      console.error("Error updating template", result.status, result.error || result.body);
       throw MailerError.new("Can't update Template", 500);
     }
 
@@ -83,8 +83,8 @@ export class MailerClient {
   async createTemplate(t: MailTemplate): Promise<MailTemplate> {
     const result = await this._fetch.post('templates', t);
     if (result.status !== 200) {
-      console.error("Error creating template", result.error);
-      throw MailerError.new("Can't create Templates", 500);
+      console.error("Error creating template", result.status, result.error || result.body);
+      throw MailerError.new("Can't create Template", 500);
     }
 
     return result.body.template;
@@ -93,7 +93,7 @@ export class MailerClient {
   async removeTemplate(name: string, language: string) {
     const result = await this._fetch.delete(`templates/${name}/${language}`);
     if (result.status !== 200) {
-      console.error("Error deleting template", result.error);
+      console.error("Error deleting template", result.status, result.error || result.body);
       throw MailerError.new("Can't delete Template", 500);
     }
   }
