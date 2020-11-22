@@ -55,3 +55,12 @@ export class QueuedEmail {
     return result;
   }
 }
+
+export interface MailTemplate {
+  id?: number;
+  name: string;
+  language?: string;
+  subject: string;
+  text: string;
+  html?: string;
+}

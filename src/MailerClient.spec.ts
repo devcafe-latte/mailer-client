@@ -2,7 +2,7 @@ import { MailerClient } from './MailerClient';
 import { MailContent } from './util/Mail';
 import * as dotenv from 'dotenv';
 
-describe("Mail Client", () => {
+describe("Mail Client Basics", () => {
   let mailer: MailerClient;
 
   beforeEach(async (done) => {
@@ -52,4 +52,54 @@ describe("Mail Client", () => {
     //get latest emails
     done();
   });
+});
+
+describe("Mail Client Templates", () => {
+  let mailer: MailerClient;
+
+  beforeEach(async (done) => {
+    dotenv.config();
+    mailer = new MailerClient(process.env.TEST_MAILER_ENDPOINT);
+    done();
+  });
+
+  it("gets templates", async (done) => {
+    const ts = await mailer.getTemplates();
+    expect(ts.length).toBeGreaterThan(0);
+    done();
+  });
+
+  it("create new template", async (done) => {
+    const data = {
+      name: 'some-test-template',
+      language: 'nz',
+      subject: 'I saw a kiwi',
+      text: "They're weird little critters.",
+    };
+    //Cleanup old test data
+    await mailer.removeTemplate(data.name, data.language).catch(() => { });
+
+    const t = await mailer.createTemplate(data);
+    expect(t.id).toBeGreaterThan(0);
+
+    done();
+  });
+
+  it("updates template", async (done) => {
+    const data = {
+      name: 'some-test-template',
+      language: 'nz',
+      subject: 'I saw a kiwi',
+      text: "They're weird little critters.",
+    };
+    //Post test data
+    await mailer.createTemplate(data).catch(() => { });
+
+    const updated = await mailer.updateTemplate({ name: data.name, language: data.language, subject: 'chookity' });
+
+    expect(updated.subject).toBe('chookity');
+
+    done();
+  });
+
 });

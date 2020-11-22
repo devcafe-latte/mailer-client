@@ -1,6 +1,6 @@
 import { FetchWrapper } from './fetch/FetchWrapper';
 import { Page, PageResult } from './util/Page';
-import { QueuedEmail, EmailPage, MailContent } from './util/Mail';
+import { QueuedEmail, EmailPage, MailContent, MailTemplate } from './util/Mail';
 import { MailerError } from './util/MailerError';
 
 export class MailerClient {
@@ -57,6 +57,47 @@ export class MailerClient {
     console.error("Mail error:", result.status, result.error || result.body);
     return false;
   }
+
+
+  /* Region Templates */
+  async getTemplates(): Promise<MailTemplate[]> {
+    const result = await this._fetch.get('templates');
+    if (result.status !== 200) {
+      console.error("Error getting templates", result.error);
+      throw MailerError.new("Can't get Templates", 500);
+    }
+
+    return result.body.templates;
+  }
+
+  async updateTemplate(t: Partial<MailTemplate>): Promise<MailTemplate> {
+    const result = await this._fetch.put('templates', t);
+    if (result.status !== 200) {
+      console.error("Error updating template", result.error);
+      throw MailerError.new("Can't update Template", 500);
+    }
+
+    return result.body.template;
+  }
+
+  async createTemplate(t: MailTemplate): Promise<MailTemplate> {
+    const result = await this._fetch.post('templates', t);
+    if (result.status !== 200) {
+      console.error("Error creating template", result.error);
+      throw MailerError.new("Can't create Templates", 500);
+    }
+
+    return result.body.template;
+  }
+
+  async removeTemplate(name: string, language: string) {
+    const result = await this._fetch.delete(`templates/${name}/${language}`);
+    if (result.status !== 200) {
+      console.error("Error deleting template", result.error);
+      throw MailerError.new("Can't delete Template", 500);
+    }
+  }
+  /* End region */
   
 }
 
