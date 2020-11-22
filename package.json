@@ -2,7 +2,8 @@
   "name": "covle-mailer-client",
   "version": "1.0.0",
   "description": "Client for Covle Mailer",
-  "main": "src/MailerClient.ts",
+  "main": "build/MailerClient.js",
+  "types": "build/MailerClient.d.ts",
   "files": [
     "build/**/*",
     "!build/**/*.spec.*"

@@ -49,7 +49,6 @@ export class FetchWrapper implements FetchWrapperInterface {
     };
     if (qi.body) init.body = JSON.stringify(qi.body);
 
-    console.log("Doing", this._endpoint, qi.url);
     await fetch(this._endpoint + qi.url, init)
       .then(async r => qi.deferred.resolve(await ApiResponse.new(r)))
       .catch(async e => qi.deferred.resolve(await ApiResponse.new(e)));
