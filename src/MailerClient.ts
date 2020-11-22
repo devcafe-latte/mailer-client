@@ -49,17 +49,12 @@ export class MailerClient {
       return false;
     }
 
-    if (!m.language) {
-      console.warn(`Email has no language.`, m);
-      return false;
-    }
-
     const result = await this._fetch.post("email-from-template", m);
     console.log(`Mail: "${m.template}" sent`);
 
     if (result.status === 200) return true;
 
-    console.error("Mail error:", result.error);
+    console.error("Mail error:", result.status, result.error || result.body);
     return false;
   }
   

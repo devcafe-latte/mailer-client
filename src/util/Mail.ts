@@ -39,6 +39,9 @@ export class QueuedEmail {
   created: Moment = null;
   retryAfter?: Moment = null;
 
+  template?: string = null;
+  language?: string = null;
+
   static deserialize(data: any): QueuedEmail {
 
     let m: ObjectMapping = {
