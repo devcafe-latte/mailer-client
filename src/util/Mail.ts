@@ -2,11 +2,11 @@ import { Moment } from 'moment';
 import { ObjectMapping, Serializer } from './Serializer';
 
 export interface MailContent {
-  from: Address;
+  from?: Address;
   to: string | Address;
   replyTo?: string | Address;
   template: string;
-  language: string;
+  language?: string;
   params?: any;
 }
 
