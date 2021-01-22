@@ -1,4 +1,6 @@
 import { Address } from './Mail';
+import { Moment } from 'moment';
+import { Serializer } from './Serializer';
 
 export interface Transport {
   id?: number;
@@ -49,4 +51,23 @@ export enum MailTransportType {
 export interface DefaultMailSettings {
   from: Address;
   language: string;
+}
+
+export class TransportStats {
+  start: Moment = null;
+  end: Moment = null;
+  stats: TransportStat[] = [];
+
+  static deserialize(data: any): TransportStats {
+    const m = {
+      start: 'moment',
+      end: 'moment',
+    }
+    return Serializer.deserialize(TransportStats, data, m);
+  }
+}
+
+export interface TransportStat {
+  transportId: number;
+  count: number;
 }

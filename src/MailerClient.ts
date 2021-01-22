@@ -2,13 +2,14 @@ import { FetchWrapper } from './fetch/FetchWrapper';
 import { Page, PageResult } from './util/Page';
 import { QueuedEmail, EmailPage, MailContent, MailTemplate } from './util/Mail';
 import { MailerError } from './util/MailerError';
-import { Transport } from './util/Transport';
+import { Transport, TransportStats } from './util/Transport';
+import { Moment } from 'moment';
 
 export class MailerClient {
   private _endpoint = "http://mailer:3010/";
   private _fetch: FetchWrapper;
 
-  constructor(optionsOrUrl?: string|MailerClientOptions) {
+  constructor(optionsOrUrl?: string | MailerClientOptions) {
     if (!optionsOrUrl) {
       //let it be.
     } else if (typeof optionsOrUrl === "string") {
@@ -101,6 +102,19 @@ export class MailerClient {
   /* End region */
 
   /* Region Transports */
+  async getStats(start?: Moment, end?: Moment): Promise<TransportStats> {
+    let params = [];
+    if (start) params.push(`start=${start.unix()}`);
+    if (end) params.push(`end=${end.unix()}`);
+
+    const result = await this._fetch.get(`transport-stats?${params.join("&")}`);
+    if (result.status !== 200) {
+      console.error("Error getting Stats", result.status, result.error || result.body);
+      throw MailerError.new("Can't get Stats", 500);
+    }
+    return TransportStats.deserialize(result.body.stats);
+  }
+
   async getTransports(): Promise<Transport[]> {
     const result = await this._fetch.get(`transports`);
     if (result.status !== 200) {
@@ -109,6 +123,7 @@ export class MailerClient {
     }
     return result.body.transports;
   }
+
   async updateTransport(t: Partial<Transport>): Promise<Transport> {
     const result = await this._fetch.put('transports', t);
     if (result.status !== 200) {
@@ -137,7 +152,7 @@ export class MailerClient {
     }
   }
   /* End region */
-  
+
 }
 
 export interface MailerClientOptions {

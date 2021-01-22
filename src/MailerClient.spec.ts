@@ -2,6 +2,7 @@ import { MailerClient } from './MailerClient';
 import { MailContent } from './util/Mail';
 import * as dotenv from 'dotenv';
 import { MailTransportType, Transport } from './util/Transport';
+import moment from 'moment';
 
 describe("Mail Client Basics", () => {
   let mailer: MailerClient;
@@ -115,6 +116,28 @@ describe("Mail Transport Configs", () => {
     done();
   });
 
+  it("gets transport Stats", async (done) => {
+    let stats = await mailer.getStats();
+    expect(Array.isArray(stats.stats)).toBe(true);
+    expect(stats.start).toBe(null);
+    expect(stats.end).toBe(null);
+
+    console.log(stats);
+
+    //With start and end
+    const start = moment().subtract(1, 'week').startOf('day');
+    const end = moment().startOf('day');
+
+    stats = await mailer.getStats(start, end);
+    expect(Array.isArray(stats.stats)).toBe(true);
+    expect(stats.start.isSame(start)).toBe(true);
+    expect(stats.end.isSame(end)).toBe(true);
+
+    console.log(stats);
+
+    done();
+  });
+
   it("gets transports", async (done) => {
     const ts = await mailer.getTransports();
     expect(ts.length).toBeGreaterThan(0);
@@ -160,7 +183,7 @@ describe("Mail Transport Configs", () => {
 
     expect(updated.name).toBe('chookity');
 
-    await mailer.removeTransport(posted.id).catch(() => { });
+    await mailer.removeTransport(posted.id);
 
     done();
   });
