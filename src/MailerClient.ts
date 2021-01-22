@@ -2,6 +2,7 @@ import { FetchWrapper } from './fetch/FetchWrapper';
 import { Page, PageResult } from './util/Page';
 import { QueuedEmail, EmailPage, MailContent, MailTemplate } from './util/Mail';
 import { MailerError } from './util/MailerError';
+import { Transport } from './util/Transport';
 
 export class MailerClient {
   private _endpoint = "http://mailer:3010/";
@@ -95,6 +96,44 @@ export class MailerClient {
     if (result.status !== 200) {
       console.error("Error deleting template", result.status, result.error || result.body);
       throw MailerError.new("Can't delete Template", 500);
+    }
+  }
+  /* End region */
+
+  /* Region Transports */
+  async getTransports(): Promise<Transport[]> {
+    const result = await this._fetch.get(`transports`);
+    if (result.status !== 200) {
+      console.error("Error getting transports", result.status, result.error || result.body);
+      throw MailerError.new("Can't get transports", 500);
+    }
+    return result.body.transports;
+  }
+  async updateTransport(t: Partial<Transport>): Promise<Transport> {
+    const result = await this._fetch.put('transports', t);
+    if (result.status !== 200) {
+      console.error("Error updating transport", result.status, result.error || result.body);
+      throw MailerError.new("Can't update Transport", 500);
+    }
+
+    return result.body.transport;
+  }
+
+  async createTransport(t: Transport): Promise<Transport> {
+    const result = await this._fetch.post('transports', t);
+    if (result.status !== 200) {
+      console.error("Error creating transport", result.status, result.error || result.body);
+      throw MailerError.new("Can't create transport", 500);
+    }
+
+    return result.body.transport;
+  }
+
+  async removeTransport(id: number) {
+    const result = await this._fetch.delete(`transport/${id}`);
+    if (result.status !== 200) {
+      console.error("Error deleting transport", result.status, result.error || result.body);
+      throw MailerError.new("Can't delete transport", 500);
     }
   }
   /* End region */

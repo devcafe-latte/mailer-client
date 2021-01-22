@@ -1,6 +1,7 @@
 import { MailerClient } from './MailerClient';
 import { MailContent } from './util/Mail';
 import * as dotenv from 'dotenv';
+import { MailTransportType, Transport } from './util/Transport';
 
 describe("Mail Client Basics", () => {
   let mailer: MailerClient;
@@ -98,6 +99,68 @@ describe("Mail Client Templates", () => {
     const updated = await mailer.updateTemplate({ name: data.name, language: data.language, subject: 'chookity' });
 
     expect(updated.subject).toBe('chookity');
+
+    done();
+  });
+
+});
+
+
+describe("Mail Transport Configs", () => {
+  let mailer: MailerClient;
+
+  beforeEach(async (done) => {
+    dotenv.config();
+    mailer = new MailerClient(process.env.TEST_MAILER_ENDPOINT);
+    done();
+  });
+
+  it("gets transports", async (done) => {
+    const ts = await mailer.getTransports();
+    expect(ts.length).toBeGreaterThan(0);
+    done();
+  });
+
+  it("create new transport", async (done) => {
+    const data: Transport = {
+      name: 'some-test-transport-' + Math.floor(Math.random() * 1000) ,
+      type: MailTransportType.SENDINBLUE,
+      weight: 100,
+      active: false,
+      default: true,
+      sib: {
+        apiKey: 'some-key-from-client'
+      }
+    };
+    
+    const t = await mailer.createTransport(data);
+    expect(t.id).toBeGreaterThan(0);
+    
+    //Cleanup old test data
+    await mailer.removeTransport(t.id).catch(() => { });
+    
+    done();
+  });
+
+  it("updates Transport", async (done) => {
+    const data: Transport = {
+      name: 'some-test-transport-' + Math.floor(Math.random() * 1000) ,
+      type: MailTransportType.SENDINBLUE,
+      weight: 100,
+      active: false,
+      default: true,
+      sib: {
+        apiKey: 'some-key-from-client'
+      }
+    };
+    //Post test data
+    const posted = await mailer.createTransport(data);
+
+    const updated = await mailer.updateTransport({ id: posted.id, name: 'chookity' });
+
+    expect(updated.name).toBe('chookity');
+
+    await mailer.removeTransport(posted.id).catch(() => { });
 
     done();
   });
