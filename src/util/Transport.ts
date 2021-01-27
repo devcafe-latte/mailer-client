@@ -9,6 +9,7 @@ export interface Transport {
   active?: boolean;
   weight?: number;
   default?: boolean;
+  domain?: string;
 
   sib?: SendInBlueSettings;
   mg?: MailgunSettings;

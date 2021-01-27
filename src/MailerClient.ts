@@ -145,7 +145,7 @@ export class MailerClient {
   }
 
   async removeTransport(id: number) {
-    const result = await this._fetch.delete(`transport/${id}`);
+    const result = await this._fetch.delete(`transports/${id}`);
     if (result.status !== 200) {
       console.error("Error deleting transport", result.status, result.error || result.body);
       throw MailerError.new("Can't delete transport", 500);

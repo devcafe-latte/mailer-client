@@ -38,6 +38,7 @@ export class QueuedEmail {
   sent?: Moment = null;
   created: Moment = null;
   retryAfter?: Moment = null;
+  transportId?: number = null;
 
   template?: string = null;
   language?: string = null;
